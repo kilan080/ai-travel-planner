@@ -1,0 +1,167 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+import { useAuthStore } from "@/store/authStore";
+import { generateTrip, type TripResponse } from "@/lib/api-client";
+import { saveTripToFirestore } from "@/lib/firebase/trip";
+
+export default function GeneratePage() {
+  const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+
+  const [formData, setFormData] = useState({
+    destination: "",
+    duration: "",
+    budget: "",
+    interests: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { destination, duration, budget, interests } = formData;
+
+    if (!destination || !duration || !budget || !interests) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const data = await generateTrip(formData);
+
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      if (data.trip) {
+        if (user) {
+          const tripId = await saveTripToFirestore(data.trip, user.uid);
+          router.push(`/trips/${tripId}`); // ← redirect here
+        } else {
+          toast.error("Please sign in to save your trip");
+        }
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-neutral-950 text-white px-4 py-10">
+      <Toaster position="top-center" />
+
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+        {/* LEFT SECTION — unchanged */}
+        <div className="space-y-6">
+          <div className="inline-block rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-neutral-300">
+            AI Powered Travel Planning
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+            Plan smarter trips with AI
+          </h1>
+          <p className="text-neutral-400 text-base md:text-lg leading-relaxed">
+            Generate personalized travel itineraries based on your budget,
+            interests, and destination preferences.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <h3 className="font-semibold mb-2">Smart Itineraries</h3>
+              <p className="text-sm text-neutral-400">
+                AI creates detailed day-by-day travel plans instantly.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <h3 className="font-semibold mb-2">Budget Friendly</h3>
+              <p className="text-sm text-neutral-400">
+                Trips tailored to your spending limit and preferences.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* FORM SECTION — unchanged except button text */}
+        <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md p-6 md:p-8 shadow-2xl">
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold">Generate Your Trip</h2>
+            <p className="text-neutral-400 mt-2 text-sm">
+              Fill in your travel preferences and let AI do the planning.
+            </p>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block mb-2 text-sm text-neutral-300">
+                Destination
+              </label>
+              <input
+                type="text"
+                name="destination"
+                placeholder="e.g Japan"
+                value={formData.destination}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-white/30"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm text-neutral-300">
+                Duration
+              </label>
+              <input
+                type="text"
+                name="duration"
+                placeholder="e.g 7 days"
+                value={formData.duration}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-white/30"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm text-neutral-300">
+                Budget
+              </label>
+              <input
+                type="text"
+                name="budget"
+                placeholder="e.g $2000"
+                value={formData.budget}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-white/30"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm text-neutral-300">
+                Interests
+              </label>
+              <textarea
+                name="interests"
+                placeholder="e.g Anime, food, nightlife"
+                value={formData.interests}
+                onChange={handleChange}
+                rows={4}
+                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none resize-none focus:border-white/30"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-white text-black font-medium py-3 transition hover:opacity-90 disabled:opacity-50 cursor-pointer"
+            >
+              {loading ? "Generating & saving..." : "Generate Trip"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+  );
+}
