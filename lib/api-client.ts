@@ -51,3 +51,36 @@ export async function generateTrip(formData: TripFormData): Promise<TripResponse
     return { error: "Something went wrong. Please try again." };
   }
 }
+
+export interface ChatRequestPayload {
+  messages: { role: "user" | "system" | "assistant"; content: string }[];
+  tripContext: object;
+}
+
+export interface ChatResponsePayload {
+  message?: string;
+  error?: string;
+}
+
+export async function generateChatResponse(payload: ChatRequestPayload): Promise<ChatResponsePayload> {
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { error: data.error || "Failed to get response" };
+    }
+
+    return { message: data.message };
+  } catch (error) {
+    console.error("API Client Error:", error);
+    return { error: "Something went wrong. Please try again." };
+  }
+}

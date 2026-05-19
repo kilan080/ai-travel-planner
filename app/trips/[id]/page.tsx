@@ -1,12 +1,14 @@
-// app/trips/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getTripFromFirestore } from "@/lib/firebase/trip";
+import { ChatMessage, getTripFromFirestore } from "@/lib/firebase/trip";
 import { type TripResponse } from "@/lib/api-client";
+import TripChat from "@/components/TripChat";
 
-type Trip = NonNullable<TripResponse["trip"]>;
+interface Trip extends NonNullable<TripResponse["trip"]> {
+  chatMessages?: ChatMessage[];
+}
 
 export default function TripDetailPage() {
   const { id } = useParams();
@@ -19,7 +21,7 @@ export default function TripDetailPage() {
       try {
         const data = await getTripFromFirestore(id as string);
         if (data) {
-          setTrip(data as Trip);
+          setTrip(data as unknown as Trip);
         } else {
           router.push("/trips");
         }
@@ -234,6 +236,30 @@ export default function TripDetailPage() {
                 ))}
               </ul>
             </div>
+          </div>
+
+          <div className="mt-12 relative z-10">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-neutral-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                />
+              </svg>
+              Ask Your Trip Assistant
+            </h3>
+            <TripChat
+              tripId={id as string}
+              tripContext={trip}
+              initialMessages={trip.chatMessages || []}
+            />
           </div>
         </div>
       </div>

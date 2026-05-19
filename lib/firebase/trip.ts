@@ -10,8 +10,16 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
+import { updateDoc, arrayUnion } from "firebase/firestore";
+
 import { db } from "@/firebase/config";
 import { type TripResponse } from "@/lib/api-client";
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  createdAt: number;
+}
 
 export const saveTripToFirestore = async (
   tripData: NonNullable<TripResponse["trip"]>,
@@ -62,6 +70,19 @@ export const getUserTrips = async (userId: string) => {
 export const deleteTripFromFirestore = async (tripId: string) => {
   try {
     await deleteDoc(doc(db, "trips", tripId));
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const saveChatMessage = async (tripId: string, message: ChatMessage) => {
+  try {
+    const docRef = doc(db, "trips", tripId);
+
+    await updateDoc(docRef, {
+      chatMessages: arrayUnion(message),
+    });
   } catch (error) {
     console.error(error);
     throw error;
