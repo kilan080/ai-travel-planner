@@ -2,17 +2,17 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 import { OpenRouter } from "@openrouter/sdk";
 
-// Initialize Gemini (Fallback)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-
-// Initialize OpenRouter (Primary)
-const openrouter = new OpenRouter({
-  httpReferer: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPEN_ROUTER_API_KEY,
-  appTitle: "AI Travel Planner",
-});
-
 export async function POST(req: Request) {
+  // Initialize Gemini (Fallback)
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
+  // Initialize OpenRouter (Primary)
+  const openrouter = new OpenRouter({
+    httpReferer: "https://openrouter.ai/api/v1",
+    apiKey: process.env.OPEN_ROUTER_API_KEY,
+    appTitle: "AI Travel Planner",
+  });
+
   try {
     const body = await req.json();
 
