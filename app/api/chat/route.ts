@@ -19,7 +19,8 @@ Answer questions specifically about this trip. Be concise, helpful, and friendly
 If asked about something unrelated to travel or this trip, gently redirect the conversation.`;
 
     const response = await openai.chat.completions.create({
-      model: "openai/gpt-4o-mini", // OpenRouter model format
+      // model: "openai/gpt-4o-mini",
+      model: "meta-llama/llama-3.3-8b-instruct:free",
       messages: [{ role: "system", content: systemPrompt }, ...messages],
       max_tokens: 500,
     });
@@ -28,11 +29,12 @@ If asked about something unrelated to travel or this trip, gently redirect the c
       message: response.choices[0].message.content,
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Failed to get response";
-    console.error("Chat API error:", error instanceof Error ? error.message : error);
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 },
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to get response";
+    console.error(
+      "Chat API error:",
+      error instanceof Error ? error.message : error,
     );
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

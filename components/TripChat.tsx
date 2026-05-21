@@ -81,12 +81,12 @@ export default function TripChat({
   };
 
   return (
-    <div className="flex flex-col h-[500px] rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+    <div className="flex flex-col h-[500px] rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
       {/* HEADER */}
-      <div className="px-5 py-4 border-b border-white/10 flex items-center gap-3">
-        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-        <h3 className="font-semibold text-sm">Trip Assistant</h3>
-        <span className="text-xs text-neutral-500 ml-auto">
+      <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 flex items-center gap-3">
+        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <h3 className="font-semibold text-sm text-slate-900">Trip Assistant</h3>
+        <span className="text-xs text-slate-500 ml-auto">
           Ask anything about your trip
         </span>
       </div>
@@ -95,9 +95,9 @@ export default function TripChat({
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center">
               <svg
-                className="w-5 h-5 text-neutral-400"
+                className="w-5 h-5 text-rose-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -111,10 +111,10 @@ export default function TripChat({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-neutral-300">
+              <p className="text-sm font-medium text-slate-700">
                 Ask your trip assistant
               </p>
-              <p className="text-xs text-neutral-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 &quot;What should I pack?&quot; · &quot;Best time to
                 visit?&quot; · &quot;Any safety tips?&quot;
               </p>
@@ -128,10 +128,10 @@ export default function TripChat({
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+              className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                 msg.role === "user"
-                  ? "bg-white text-black rounded-br-sm"
-                  : "bg-white/10 text-neutral-200 rounded-bl-sm"
+                  ? "bg-rose-500 text-white rounded-br-sm"
+                  : "bg-slate-50 border border-slate-200 text-slate-700 rounded-bl-sm"
               }`}
             >
               {msg.content}
@@ -141,11 +141,11 @@ export default function TripChat({
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-white/10 rounded-2xl rounded-bl-sm px-4 py-3">
+            <div className="bg-slate-50 border border-slate-200 shadow-sm rounded-2xl rounded-bl-sm px-4 py-3">
               <div className="flex gap-1 items-center h-4">
-                <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-bounce [animation-delay:0ms]" />
-                <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-bounce [animation-delay:300ms]" />
+                <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:300ms]" />
               </div>
             </div>
           </div>
@@ -155,19 +155,19 @@ export default function TripChat({
       </div>
 
       {/* INPUT */}
-      <div className="px-4 py-3 border-t border-white/10 flex gap-3 items-end">
+      <div className="px-4 py-3 border-t border-slate-200 bg-slate-50 flex gap-3 items-end">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask about your trip..."
           rows={1}
-          className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-white/30 resize-none placeholder:text-neutral-500"
+          className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 resize-none placeholder:text-slate-400 transition"
         />
         <button
           onClick={sendMessage}
           disabled={!input.trim() || loading}
-          className="p-2.5 rounded-xl bg-white text-black hover:opacity-90 transition disabled:opacity-30 flex-shrink-0"
+          className="p-2.5 rounded-xl bg-rose-500 text-white shadow-sm hover:bg-rose-600 transition disabled:opacity-50 flex-shrink-0"
         >
           <svg
             className="w-4 h-4"

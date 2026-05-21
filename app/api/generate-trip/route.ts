@@ -1,14 +1,15 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+import { OpenRouter } from "@openrouter/sdk";
 
 // Initialize Gemini (Fallback)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 // Initialize OpenRouter (Primary)
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPEN_ROUTER_API_KEY || "",
+const openrouter = new OpenRouter({
+  httpReferer: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPEN_ROUTER_API_KEY,
+  appTitle: "AI Travel Planner",
 });
 
 export async function POST(req: Request) {
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
     `;
 
     let text = "";
+    console.log("generating trip...");
 
     try {
       if (!process.env.OPEN_ROUTER_API_KEY) {
@@ -58,18 +60,30 @@ export async function POST(req: Request) {
       }
 
       // Try OpenRouter first
-      const response = await openai.chat.completions.create({
-        model: "openai/gpt-4o-mini", // You can change this to any OpenRouter model, e.g., "openai/gpt-4o-mini" or "meta-llama/llama-3.3-70b-instruct"
-        messages: [{ role: "user", content: prompt }],
+      const response = await openrouter.chat.send({
+        // model: "openai/gpt-4o-mini",
+        // model: "openai/gpt-5-mini-2025-08-07",
+        // messages: [{ role: "user", content: prompt }],
+        chatRequest: {
+          messages: [{ role: "user", content: prompt }],
+          model: "openai/gpt-5-mini-2025-08-07",
+        },
       });
+
+      console.log("response", response);
 
       text = response.choices[0]?.message?.content || "";
     } catch (openRouterError) {
-      console.warn("OpenRouter failed, falling back to Gemini API directly:", openRouterError);
+      console.warn(
+        "OpenRouter failed, falling back to Gemini API directly:",
+        openRouterError,
+      );
 
       if (!process.env.GEMINI_API_KEY) {
         return NextResponse.json(
-          { error: "Both OpenRouter and Gemini API Keys are missing or failed." },
+          {
+            error: "Both OpenRouter and Gemini API Keys are missing or failed.",
+          },
           { status: 500 },
         );
       }
@@ -89,7 +103,7 @@ export async function POST(req: Request) {
 
     // Safety check: strip markdown code blocks if the model accidentally included them
     const cleanJson = text.replace(/```json|```/g, "").trim();
-    
+
     let responseObj;
     try {
       responseObj = JSON.parse(cleanJson);
@@ -107,13 +121,13 @@ export async function POST(req: Request) {
   } catch (error: unknown) {
     console.error("CRITICAL API ERROR:", error);
 
-    // Provide more specific feedback for common AI API errors
     let errorMessage = "Something went wrong while generating your trip.";
-    
+
     if (typeof error === "object" && error !== null) {
       const err = error as { status?: number; message?: string };
       if (err.status === 429) {
-        errorMessage = "Rate limit exceeded. Please wait a moment and try again.";
+        errorMessage =
+          "Rate limit exceeded. Please wait a moment and try again.";
       } else if (err.status === 403) {
         errorMessage = "Invalid API Key or permission denied.";
       } else if (err.message) {
@@ -123,9 +137,6 @@ export async function POST(req: Request) {
       errorMessage = error.message;
     }
 
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

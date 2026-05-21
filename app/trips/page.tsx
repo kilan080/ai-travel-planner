@@ -24,6 +24,7 @@ export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [tripToDelete, setTripToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     // Wait a moment for auth to hydrate before redirecting
@@ -48,17 +49,18 @@ export default function TripsPage() {
     fetchTrips();
   }, [user]);
 
-  const handleDelete = async (tripId: string) => {
-    if (!confirm("Delete this trip?")) return;
+  const confirmDelete = async () => {
+    if (!tripToDelete) return;
     try {
-      setDeletingId(tripId);
-      await deleteTripFromFirestore(tripId);
-      setTrips((prev) => prev.filter((t) => t.id !== tripId));
+      setDeletingId(tripToDelete);
+      await deleteTripFromFirestore(tripToDelete);
+      setTrips((prev) => prev.filter((t) => t.id !== tripToDelete));
       toast.success("Trip deleted");
     } catch {
       toast.error("Failed to delete trip");
     } finally {
       setDeletingId(null);
+      setTripToDelete(null);
     }
   };
 
@@ -73,8 +75,8 @@ export default function TripsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
-        <div className="text-neutral-400 animate-pulse text-lg">
+      <main className="flex-1 text-slate-900 flex items-center justify-center">
+        <div className="text-slate-500 animate-pulse text-lg">
           Loading your trips...
         </div>
       </main>
@@ -82,7 +84,7 @@ export default function TripsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-white px-4 py-10">
+    <main className="flex-1 text-slate-900 px-4 py-10 w-full">
       <Toaster position="top-center" />
 
       <div className="max-w-6xl mx-auto">
@@ -90,13 +92,13 @@ export default function TripsPage() {
         <div className="flex items-center justify-between mb-10">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold">My Trips</h1>
-            <p className="text-neutral-400 mt-1 text-sm">
+            <p className="text-slate-500 mt-1 text-sm">
               {trips.length} {trips.length === 1 ? "trip" : "trips"} saved
             </p>
           </div>
           <Link
             href="/generate"
-            className="px-5 py-2.5 rounded-xl bg-white text-black text-sm font-medium hover:opacity-90 transition flex items-center gap-2"
+            className="px-5 py-2.5 rounded-xl bg-rose-500 text-white text-sm font-medium hover:bg-rose-600 shadow-sm transition flex items-center gap-2"
           >
             <svg
               className="w-4 h-4"
@@ -118,9 +120,9 @@ export default function TripsPage() {
         {/* EMPTY STATE */}
         {trips.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center mb-6">
               <svg
-                className="w-8 h-8 text-neutral-500"
+                className="w-8 h-8 text-rose-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -134,12 +136,12 @@ export default function TripsPage() {
               </svg>
             </div>
             <h2 className="text-xl font-semibold mb-2">No trips yet</h2>
-            <p className="text-neutral-400 text-sm mb-6 max-w-sm">
+            <p className="text-slate-500 text-sm mb-6 max-w-sm">
               Generate your first AI-powered itinerary and it will appear here.
             </p>
             <Link
               href="/generate"
-              className="px-6 py-3 rounded-xl bg-white text-black text-sm font-medium hover:opacity-90 transition"
+              className="px-6 py-3 rounded-xl bg-rose-500 text-white text-sm font-medium hover:bg-rose-600 shadow-sm transition"
             >
               Generate a Trip
             </Link>
@@ -150,7 +152,7 @@ export default function TripsPage() {
             {trips.map((trip) => (
               <div
                 key={trip.id}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/[0.08] transition duration-300 flex flex-col justify-between gap-6"
+                className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between gap-6"
               >
                 {/* TOP */}
                 <div className="space-y-3">
@@ -159,9 +161,9 @@ export default function TripsPage() {
                       {trip.tripTitle}
                     </h2>
                     <button
-                      onClick={() => handleDelete(trip.id)}
+                      onClick={() => setTripToDelete(trip.id)}
                       disabled={deletingId === trip.id}
-                      className="flex-shrink-0 p-1.5 rounded-lg text-neutral-600 hover:text-red-400 hover:bg-red-400/10 transition disabled:opacity-40"
+                      className="flex-shrink-0 p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition disabled:opacity-40"
                     >
                       <svg
                         className="w-4 h-4"
@@ -180,7 +182,7 @@ export default function TripsPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <span className="flex items-center gap-1 text-xs text-neutral-400 bg-white/5 border border-white/5 px-2.5 py-1 rounded-lg">
+                    <span className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg">
                       <svg
                         className="w-3 h-3"
                         fill="none"
@@ -202,7 +204,7 @@ export default function TripsPage() {
                       </svg>
                       {trip.destination}
                     </span>
-                    <span className="flex items-center gap-1 text-xs text-neutral-400 bg-white/5 border border-white/5 px-2.5 py-1 rounded-lg">
+                    <span className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg">
                       <svg
                         className="w-3 h-3"
                         fill="none"
@@ -221,23 +223,23 @@ export default function TripsPage() {
                   </div>
 
                   <div className="flex justify-between text-sm pt-1">
-                    <span className="text-neutral-500">Total budget</span>
-                    <span className="font-semibold text-neutral-200">
+                    <span className="text-slate-500">Total budget</span>
+                    <span className="font-semibold text-slate-900">
                       {trip.budgetBreakdown.total}
                     </span>
                   </div>
                 </div>
 
                 {/* BOTTOM */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                   {formatDate(trip) && (
-                    <span className="text-xs text-neutral-500">
+                    <span className="text-xs text-slate-500">
                       {formatDate(trip)}
                     </span>
                   )}
                   <Link
                     href={`/trips/${trip.id}`}
-                    className="ml-auto text-sm font-medium text-white flex items-center gap-1 hover:gap-2 transition-all"
+                    className="ml-auto text-sm font-medium text-rose-600 flex items-center gap-1 hover:gap-2 hover:text-rose-700 transition-all"
                   >
                     View trip
                     <svg
@@ -260,6 +262,34 @@ export default function TripsPage() {
           </div>
         )}
       </div>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {tripToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in duration-200">
+            <h3 className="text-xl font-bold mb-2">Delete Trip?</h3>
+            <p className="text-slate-500 text-sm mb-6">
+              Are you sure you want to delete this trip? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setTripToDelete(null)}
+                className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition text-sm font-medium"
+                disabled={deletingId !== null}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 shadow-sm transition text-sm disabled:opacity-50"
+                disabled={deletingId !== null}
+              >
+                {deletingId === tripToDelete ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -88,3 +88,16 @@ export const saveChatMessage = async (tripId: string, message: ChatMessage) => {
     throw error;
   }
 };
+
+export const updateTripsInFirestore = async (
+  tripId: string,
+  updatedData: object,
+) => {
+  try {
+    const docRef = doc(db, "trips", tripId);
+    await updateDoc(docRef, updatedData);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -59,49 +59,49 @@ export default function GeneratePage() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-white px-4 py-10">
+    <main className="flex-1 text-slate-900 px-4 py-10 w-full">
       <Toaster position="top-center" />
 
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
         {/* LEFT SECTION — unchanged */}
         <div className="space-y-6">
-          <div className="inline-block rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-neutral-300">
+          <div className="inline-block rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-600 font-medium">
             AI Powered Travel Planning
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+          <h1 className="text-3xl md:text-5xl font-bold leading-tight">
             Plan smarter trips with AI
           </h1>
-          <p className="text-neutral-400 text-base md:text-lg leading-relaxed">
+          <p className="text-slate-600 text-base md:text-lg leading-relaxed">
             Generate personalized travel itineraries based on your budget,
             interests, and destination preferences.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5">
               <h3 className="font-semibold mb-2">Smart Itineraries</h3>
-              <p className="text-sm text-neutral-400">
+              <p className="text-sm text-slate-600">
                 AI creates detailed day-by-day travel plans instantly.
               </p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5">
               <h3 className="font-semibold mb-2">Budget Friendly</h3>
-              <p className="text-sm text-neutral-400">
+              <p className="text-sm text-slate-600">
                 Trips tailored to your spending limit and preferences.
               </p>
             </div>
           </div>
         </div>
 
-        {/* FORM SECTION — unchanged except button text */}
-        <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md p-6 md:p-8 shadow-2xl">
+        {/* FORM SECTION */}
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-xl">
           <div className="mb-6">
             <h2 className="text-2xl font-semibold">Generate Your Trip</h2>
-            <p className="text-neutral-400 mt-2 text-sm">
+            <p className="text-slate-600 mt-2 text-sm">
               Fill in your travel preferences and let AI do the planning.
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block mb-2 text-sm text-neutral-300">
+              <label className="block mb-2 text-sm text-slate-700 font-medium">
                 Destination
               </label>
               <input
@@ -110,11 +110,11 @@ export default function GeneratePage() {
                 placeholder="e.g Japan"
                 value={formData.destination}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-white/30"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 transition"
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm text-neutral-300">
+              <label className="block mb-2 text-sm text-slate-700 font-medium">
                 Duration
               </label>
               <input
@@ -123,11 +123,11 @@ export default function GeneratePage() {
                 placeholder="e.g 7 days"
                 value={formData.duration}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-white/30"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 transition"
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm text-neutral-300">
+              <label className="block mb-2 text-sm text-slate-700 font-medium">
                 Budget
               </label>
               <input
@@ -136,11 +136,11 @@ export default function GeneratePage() {
                 placeholder="e.g $2000"
                 value={formData.budget}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-white/30"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 transition"
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm text-neutral-300">
+              <label className="block mb-2 text-sm text-slate-700 font-medium">
                 Interests
               </label>
               <textarea
@@ -149,13 +149,13 @@ export default function GeneratePage() {
                 value={formData.interests}
                 onChange={handleChange}
                 rows={4}
-                className="w-full rounded-xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none resize-none focus:border-white/30"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none resize-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 transition"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-white text-black font-medium py-3 transition hover:opacity-90 disabled:opacity-50 cursor-pointer"
+              className="w-full rounded-xl bg-rose-500 text-white font-medium py-3 transition hover:bg-rose-600 disabled:opacity-50 cursor-pointer shadow-sm"
             >
               {loading ? "Generating & saving..." : "Generate Trip"}
             </button>
