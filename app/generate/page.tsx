@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
-import { generateTrip, type TripResponse } from "@/lib/api-client";
+import { generateTrip } from "@/lib/api-client";
 import { saveTripToFirestore } from "@/lib/firebase/trip";
 
 export default function GeneratePage() {
