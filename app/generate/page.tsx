@@ -46,7 +46,7 @@ export default function GeneratePage() {
       if (data.trip) {
         if (user) {
           const tripId = await saveTripToFirestore(data.trip, user.uid);
-          router.push(`/trips/${tripId}`); // ← redirect here
+          router.push(`/trips/${tripId}`);
         } else {
           toast.error("Please sign in to save your trip");
         }
@@ -96,7 +96,7 @@ export default function GeneratePage() {
           <div className="mb-6">
             <h2 className="text-2xl font-semibold">Generate Your Trip</h2>
             <p className="text-slate-600 mt-2 text-sm">
-              Fill in your travel preferences and let AI do the planning.
+              Fill in your travel preference and let AI do the planning.
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -133,7 +133,7 @@ export default function GeneratePage() {
               <input
                 type="text"
                 name="budget"
-                placeholder="e.g $2000"
+                placeholder="e.g $200"
                 value={formData.budget}
                 onChange={handleChange}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 transition"
