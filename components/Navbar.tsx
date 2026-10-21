@@ -42,7 +42,7 @@ export default function Navbar() {
           className="flex items-center gap-2 font-bold text-lg tracking-tight"
         >
           <svg
-            className="w-5 h-5 text-rose-500"
+            className="w-5 h-5 text-rose-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -54,7 +54,9 @@ export default function Navbar() {
               d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1.1.1-1.5.5l-.3.3c-.4.4-.5 1-.1 1.4L10 12l-4 4H4l-2 2 2 2 2-2v-2l4-4 3.6 7.1c.4.4 1 .3 1.4-.1l.3-.3c.4-.4.6-1 .5-1.5z"
             />
           </svg>
-          <span className="text-slate-900 font-bold text-xl">TravelPlanner</span>
+          <span className="text-slate-900 font-bold text-xl">
+            TravelPlanner
+          </span>
         </Link>
 
         {/* NAV LINKS */}
@@ -65,7 +67,7 @@ export default function Navbar() {
               href={link.href}
               className={`px-4 py-2 rounded-lg text-sm transition ${
                 pathname === link.href
-                  ? "bg-rose-50 text-rose-600 font-medium"
+                  ? "bg-rose-50 text-rose-500 font-medium"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
@@ -102,7 +104,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={handleSignIn}
-              className="px-4 py-2 text-sm rounded-lg bg-rose-500 text-white font-medium hover:bg-rose-600 transition"
+              className="px-4 py-2 text-sm rounded-lg bg-rose-600 text-white font-medium hover:bg-rose-700 transition"
             >
               Sign in with Google
             </button>
